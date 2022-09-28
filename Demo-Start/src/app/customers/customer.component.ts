@@ -3,6 +3,17 @@ import { FormGroup, FormControl, FormBuilder, Validators, AbstractControl, Valid
 
 import { Customer } from './customer';
 
+// Nested formGroup Custom Validator
+function emailMatcher(c: AbstractControl): {[key: string]: boolean }| null {
+  const emailControl = c.get('email');
+  const confirmEmailControl = c.get('confirmEmail');
+  if(emailControl.pristine || confirmEmailControl.pristine)
+    return null;
+  if (emailControl.value === confirmEmailControl.value)
+    return null;
+  return { 'match': true };
+}
+
 // // Custom validator
 // function ratingRange(c: AbstractControl): { [key: string]: boolean } | null {
 //   if(c.value !== null && (isNaN(c.value)  || c.value < 1 || c.value > 5))
@@ -37,7 +48,10 @@ export class CustomerComponent implements OnInit {
     this.customerForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: [{value: '', disabled: false}, [Validators.required, Validators.maxLength(50)]],
-      email: ['', [Validators.email, Validators.required]],
+      emailGroup: this.fb.group({
+        email: ['', [Validators.email, Validators.required]],
+        confirmEmail: ['', Validators.required],
+      }, {validator: emailMatcher}),
       phone: '',
       notification:'email',
       rating: ['null', ratingRange(1, 5)],
