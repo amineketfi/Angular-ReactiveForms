@@ -62,17 +62,9 @@
                   type="email"
                   placeholder="Email (required)"
                   formControlName="email"
-                  [ngClass]="{'is-invalid': customerForm.get('emailGroup').errors ||
-                                            ((customerForm.get('emailGroup.email').touched ||
-                                            customerForm.get('emailGroup.email').dirty) &&
-                                            !customerForm.get('emailGroup.email').valid) }" />
+                  [ngClass]="{'is-invalid': emailMessage}" />
             <span class="invalid-feedback">
-              <span *ngIf="customerForm.get('emailGroup.email').errors?.required">
-                Please enter your email address.
-              </span>
-              <span *ngIf="customerForm.get('emailGroup.email').errors?.email">
-                Please enter a valid email address.
-              </span>
+              {{ emailMessage }}
             </span>
           </div>
         </div>
@@ -132,8 +124,7 @@
               <input  type="radio"
                       value="email"
                       class="form-check-input"
-                      formControlName="notification"
-                      (click)="setNotification('email')"> Email
+                      formControlName="notification"> Email
             </label>
           </div>
           <div class="form-check form-check-inline">
@@ -141,8 +132,7 @@
               <input  type="radio"
                       value="text"
                       class="form-check-input"
-                      formControlName="notification"
-                      (click)="setNotification('text')"> Text
+                      formControlName="notification"> Text
             </label>
           </div>
         </div>
@@ -181,7 +171,7 @@
         </div>
       </div>
 
-      <!-- <div *ngIf="customer.sendCatalog">
+      <div *ngIf="customerForm.get('sendCatalog').value">
         <div class="form-group row mb-2">
           <label class="col-md-2 col-form-label pt-0">Address Type</label>
           <div class="col-md-8">
@@ -191,8 +181,7 @@
                        id="addressType1Id"
                        type="radio"
                        value="home"
-                       [(ngModel)]="customer.addressType"
-                       name="addressType"> Home
+                       formControlName="addressType"> Home
               </label>
             </div>
             <div class="form-check form-check-inline">
@@ -201,8 +190,7 @@
                        id="addressType1Id"
                        type="radio"
                        value="work"
-                       [(ngModel)]="customer.addressType"
-                       name="addressType"> Work
+                       formControlName="addressType"> Work
               </label>
             </div>
             <div class="form-check form-check-inline">
@@ -211,8 +199,7 @@
                        id="addressType1Id"
                        type="radio"
                        value="other"
-                       [(ngModel)]="customer.addressType"
-                       name="addressType"> Other
+                       formControlName="addressType"> Other
               </label>
             </div>
           </div>
@@ -226,8 +213,7 @@
                    id="street1Id"
                    type="text"
                    placeholder="Street address"
-                   [(ngModel)]="customer.street1"
-                   name="street1">
+                   formControlName="street1">
           </div>
         </div>
 
@@ -239,8 +225,7 @@
                    id="street2Id"
                    type="text"
                    placeholder="Street address (second line)"
-                   [(ngModel)]="customer.street2"
-                   name="street2">
+                   formControlName="street2">
           </div>
         </div>
 
@@ -252,14 +237,12 @@
                    id="cityId"
                    type="text"
                    placeholder="City"
-                   [(ngModel)]="customer.city"
-                   name="city">
+                   formControlName="city">
           </div>
           <div class="col-md-3">
             <select class="form-control"
                     id="stateId"
-                    [(ngModel)]="customer.state"
-                    name="state">
+                    formControlName="state">
               <option value=""
                       disabled
                       selected
@@ -279,11 +262,10 @@
                    id="zipId"
                    type="number"
                    placeholder="Zip Code"
-                   [(ngModel)]="customer.zip"
-                   name="zip">
+                   formControlName="zip">
           </div>
         </div>
-      </div> -->
+      </div>
 
       <div class="form-group row mb-2">
         <div class="offset-md-2 col-md-4">

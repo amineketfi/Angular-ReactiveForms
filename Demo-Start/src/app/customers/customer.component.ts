@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 import { Customer } from './customer';
 
@@ -39,6 +40,13 @@ function ratingRange(min: number , max: number): ValidatorFn {  // ==> ratingRan
 export class CustomerComponent implements OnInit {
   customerForm: FormGroup;
   customer = new Customer();
+  emailMessage: string
+
+  // Object for email error messages
+  private validationMessages = {
+    required: 'Please enter your email address.',
+    email: 'Please enter a valid email address.'
+  }
 
   constructor(private fb: FormBuilder) { }
 
@@ -55,7 +63,13 @@ export class CustomerComponent implements OnInit {
       phone: '',
       notification:'email',
       rating: ['null', ratingRange(1, 5)],
-      sendCatalog: true
+      sendCatalog: true,
+      addressType: 'home',
+      street1: '',
+      street2: '',
+      city: '',
+      state: '',
+      zip: ''
     })
 
     // // Create FormGroup
@@ -65,11 +79,33 @@ export class CustomerComponent implements OnInit {
     //   email: new FormControl(),
     //   sendCatalog: new FormControl(true)
     // })
+
+    // Watch for changes on the setNotification control
+    this.customerForm.get('notification').valueChanges.subscribe(
+      value => this.setNotification(value)
+      );
+
+    // Watcher for email control
+    const emailControl = this.customerForm.get('emailGroup.email');
+    emailControl.valueChanges.pipe(
+      debounceTime(1000)
+    ).subscribe(
+      value => this.setMessage(emailControl)
+    );
   }
 
   save(): void {
     console.log(this.customerForm);
     console.log('Saved: ' + JSON.stringify(this.customerForm.value));
+  }
+
+  setMessage(c: AbstractControl): void {
+    this.emailMessage= '';
+    if((c.touched || c.dirty) && c.errors) {
+      this.emailMessage = Object.keys(c.errors).map(
+        key => this.validationMessages[key]
+      ).join(' ');
+    }
   }
 
   // Func adjusts validators dynamicaly , invoked when notification radio buttons clicked
@@ -82,9 +118,8 @@ export class CustomerComponent implements OnInit {
     phoneControl.updateValueAndValidity(); // revaluate the phone formControl state of validation (essential)
   }
 
-  // Populate test data
+  // Populate test data (some data missing)
   populateTestData() {
-
     // Complete Fill
     this.customerForm.setValue({
       firstName: 'Jack',
